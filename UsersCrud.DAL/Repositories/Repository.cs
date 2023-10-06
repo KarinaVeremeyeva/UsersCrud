@@ -14,42 +14,42 @@ namespace UsersCrud.DAL.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
-        public virtual TEntity Add(TEntity entity)
+        public virtual async Task<TEntity> AddAsync(TEntity entity)
         {
-            _dbSet.Add(entity);
-            _context.SaveChanges();
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
 
             return entity;
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return _dbSet.ToList();
+            return await _dbSet.ToListAsync();
         }
 
-        public virtual TEntity GetById(Guid id)
+        public virtual async Task<TEntity> GetByIdAsync(Guid id)
         {
-            var entity = _dbSet.FirstOrDefault(entity => entity.Id == id);
+            var entity = await _dbSet.FirstOrDefaultAsync(entity => entity.Id == id);
             
             return entity;
         }
 
-        public virtual void Remove(Guid id)
+        public virtual async Task RemoveAsync(Guid id)
         {
-            var entity = _dbSet.SingleOrDefault(entity => entity.Id == id);
+            var entity = await _dbSet.SingleOrDefaultAsync(entity => entity.Id == id);
             if (entity == null)
             {
                 return;
             }
 
             _dbSet.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public TEntity Update(TEntity entity)
+        public async Task<TEntity> UpdateAsync(TEntity entity)
         {
             _dbSet.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return entity;
         }

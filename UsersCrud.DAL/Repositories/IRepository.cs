@@ -4,14 +4,14 @@ namespace UsersCrud.DAL.Repositories
 {
     public interface IRepository<TEntity> where TEntity : Entity
     {
-        IEnumerable<TEntity> GetAll();
+        Task<IEnumerable<TEntity>> GetAllAsync();
 
-        TEntity GetById(Guid id);
+        Task<TEntity> GetByIdAsync(Guid id);
 
-        TEntity Add(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
 
-        TEntity Update(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity);
 
-        void Remove(Guid id);
+        Task RemoveAsync(Guid id);
     }
 }

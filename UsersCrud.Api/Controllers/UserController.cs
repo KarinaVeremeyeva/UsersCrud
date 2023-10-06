@@ -22,55 +22,61 @@ namespace UsersCrud.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<UserDto> GetUsers()
+        public async Task<IEnumerable<UserDto>> GetUsersAsync()
         {
-            var users = _userService.GetUsers();
+            var users = await _userService.GetUsersAsync();
             var usersDto = _mapper.Map<List<UserDto>>(users);
 
             return usersDto;
         }
 
         [HttpGet("{id}")]
-        public UserDto GetUser(Guid id)
+        public async Task<IActionResult> GetUserAsync(Guid id)
         {
-            var user = _userService.GetUserById(id);
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             var userDto = _mapper.Map<UserDto>(user);
 
-            return userDto;
+            return Ok(userDto);
         }
 
         [HttpPost]
-        public UserDto AddUser(CreateUserDto userDto)
+        public async Task<UserDto> AddUserAsync(CreateUserDto userDto)
         {
             var user = _mapper.Map<UserModel>(userDto);
-            var addedUser = _userService.AddUser(user);
+            var addedUser = await _userService.AddUserAsync(user);
             var result = _mapper.Map<UserDto>(addedUser);
 
             return result;
         }
 
         [HttpPut("{userId}/role/{roleId}")]
-        public IActionResult AddRoleToUser(Guid userId, Guid roleId)
+        public async Task<IActionResult> AddRoleToUserAsync(Guid userId, Guid roleId)
         {
-            _userService.AddRoleToUser(userId, roleId);
+            var user = await _userService.AddRoleToUserAsync(userId, roleId);
+            var result = _mapper.Map<UserDto>(user);
 
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPut]
-        public UserDto UpdateUser(UpdateUserDto userDto)
+        public async Task<UserDto> UpdateUserAsync(UpdateUserDto userDto)
         {
             var user = _mapper.Map<UserModel>(userDto);
-            var updatedUser = _userService.UpdateUser(user);
+            var updatedUser = await _userService.UpdateUserAsync(user);
             var result = _mapper.Map<UserDto>(updatedUser);
 
             return result;
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
-            _userService.RemoveUser(id);
+            await _userService.RemoveUserAsync(id);
 
             return Ok();
         }

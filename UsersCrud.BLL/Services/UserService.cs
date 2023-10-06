@@ -21,51 +21,55 @@ namespace UsersCrud.BLL.Services
             _mapper = mapper;
         }
 
-        public UserModel AddUser(UserModel user)
+        public async Task<UserModel> AddUserAsync(UserModel user)
         {
             var userToAdd = _mapper.Map<User>(user);
-            var addedUser = _userRepository.Add(userToAdd);
+            var addedUser = await _userRepository.AddAsync(userToAdd);
             var result = _mapper.Map<UserModel>(addedUser);
 
             return result;
         }
 
-        public void AddRoleToUser(Guid userId, Guid roleId)
+        public async Task<UserModel> AddRoleToUserAsync(Guid userId, Guid roleId)
         {
-            var userToUpdate = _userRepository.GetById(userId);
+            var userToUpdate = await _userRepository.GetByIdAsync(userId);
             if (userToUpdate == null)
             {
                 throw new ArgumentException($"User {userId} was not found");
             }
-            var role = _roleRepository.GetById(roleId);
+            var role = await _roleRepository.GetByIdAsync(roleId);
 
             userToUpdate.Roles.Add(role);
-            _userRepository.Update(userToUpdate);
+
+            var user = await _userRepository.UpdateAsync(userToUpdate);
+            var result = _mapper.Map<UserModel>(user);
+
+            return result;
         }
 
-        public UserModel GetUserById(Guid id)
+        public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
-            var user = _userRepository.GetById(id);
+            var user = await _userRepository.GetByIdAsync(id);
 
             return _mapper.Map<UserModel>(user);
         }
 
-        public IEnumerable<UserModel> GetUsers()
+        public async Task<IEnumerable<UserModel>> GetUsersAsync()
         {
-            var users = _userRepository.GetAll();
+            var users = await _userRepository.GetAllAsync();
             var usersModels = _mapper.Map<List<UserModel>>(users);
 
             return usersModels;
         }
 
-        public void RemoveUser(Guid id)
+        public async Task RemoveUserAsync(Guid id)
         {
-            _userRepository.Remove(id);
+            await _userRepository.RemoveAsync(id);
         }
 
-        public UserModel UpdateUser(UserModel userModel)
+        public async Task<UserModel> UpdateUserAsync(UserModel userModel)
         {
-            var userToUpdate = _userRepository.GetById(userModel.Id);
+            var userToUpdate = await _userRepository.GetByIdAsync(userModel.Id);
             if (userToUpdate == null)
             {
                 throw new ArgumentException($"User {userModel.Id} was not found");
@@ -75,7 +79,7 @@ namespace UsersCrud.BLL.Services
             userToUpdate.Name = userModel.Name;
             userToUpdate.Email = userModel.Email;
             
-            var updatedUser = _userRepository.Update(userToUpdate);
+            var updatedUser = _userRepository.UpdateAsync(userToUpdate);
             var result = _mapper.Map<UserModel>(updatedUser);
 
             return result;

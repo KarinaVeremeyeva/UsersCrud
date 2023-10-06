@@ -9,20 +9,20 @@ namespace UsersCrud.DAL.Repositories
         {
         }
 
-        public override IEnumerable<User> GetAll()
+        public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            var users = _context.Users
+            var users = await _context.Users
                 .Include(u => u.Roles)
-                .ToList();
+                .ToListAsync();
 
             return users;
         }
 
-        public override User GetById(Guid id)
+        public override async Task<User> GetByIdAsync(Guid id)
         {
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.Roles)
-                .SingleOrDefault(u => u.Id == id);
+                .SingleOrDefaultAsync(u => u.Id == id);
 
             return user;
         }

@@ -1,20 +1,19 @@
 ﻿using UsersCrud.BLL.Models;
-using UsersCrud.DAL.Entities;
 
 namespace UsersCrud.BLL.Services
 {
     public interface IUserService
     {
-        IEnumerable<UserModel> GetUsers();
+        Task<IEnumerable<UserModel>> GetUsersAsync();
 
-        UserModel GetUserById(Guid id);
+        Task<UserModel> GetUserByIdAsync(Guid id);
 
-        UserModel AddUser(UserModel user);
+        Task<UserModel> AddUserAsync(UserModel user);
 
-        void AddRoleToUser(Guid userId, Guid roleId);
+        Task<UserModel> AddRoleToUserAsync(Guid userId, Guid roleId);
 
-        UserModel UpdateUser(UserModel user);
+        Task<UserModel> UpdateUserAsync(UserModel user);
 
-        void RemoveUser(Guid id);
+        Task RemoveUserAsync(Guid id);
     }
 }
