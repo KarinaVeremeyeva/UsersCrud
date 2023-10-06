@@ -1,6 +1,4 @@
-﻿using UsersCrud.BLL.Models;
-
-namespace UsersCrud.Api.DTOs
+﻿namespace UsersCrud.Api.DTOs
 {
     public class UserDto
     {

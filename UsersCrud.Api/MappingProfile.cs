@@ -9,7 +9,6 @@ namespace UsersCrud.Api
         public MappingProfile()
         {
             CreateMap<UserModel, UserDto>().ReverseMap();
-            CreateMap<UserModel, CreateUserDto>().ReverseMap();
             CreateMap<UserModel, UpdateUserDto>().ReverseMap();
             CreateMap<RoleModel, RoleDto>();
         }
