@@ -4,7 +4,7 @@ namespace UsersCrud.BLL.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserModel>> GetUsersAsync();
+        Task<IEnumerable<UserModel>> GetUsersAsync(FilterUsersModel filterUsers);
 
         Task<UserModel> GetUserByIdAsync(Guid id);
 
@@ -15,5 +15,7 @@ namespace UsersCrud.BLL.Services
         Task<UserModel> UpdateUserAsync(UserModel user);
 
         Task RemoveUserAsync(Guid id);
+
+        Task<UserModel> GetUserByEmail(string email);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using UsersCrud.BLL.Models;
+using UsersCrud.DAL;
 using UsersCrud.DAL.Entities;
 using UsersCrud.DAL.Repositories;
 
@@ -54,9 +56,19 @@ namespace UsersCrud.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<IEnumerable<UserModel>> GetUsersAsync()
+        public async Task<UserModel> GetUserByEmail(string email)
         {
-            var users = await _userRepository.GetAllAsync();
+            var user = await _userRepository.GetQuery()
+                .SingleOrDefaultAsync(u => u.Email == email);
+            var userModel = _mapper.Map<UserModel>(user);
+
+            return userModel;
+        }
+
+        public async Task<IEnumerable<UserModel>> GetUsersAsync(FilterUsersModel filterUsersModels)
+        {
+            var filterUsers = _mapper.Map<FilterUsers>(filterUsersModels);
+            var users = await _userRepository.GetAllAsync(filterUsers);
             var usersModels = _mapper.Map<List<UserModel>>(users);
 
             return usersModels;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using UsersCrud.BLL.Models;
+using UsersCrud.DAL;
 using UsersCrud.DAL.Entities;
 using UsersCrud.DAL.Enums;
 
@@ -18,6 +19,7 @@ namespace UsersCrud.BLL
                 .ForMember(
                     dest => dest.Name,
                     opt => opt.MapFrom(src => Enum.Parse<Roles>(src.RoleName)));
+            CreateMap<FilterUsers, FilterUsersModel>().ReverseMap();
         }
     }
 }
