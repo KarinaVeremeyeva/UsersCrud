@@ -11,6 +11,7 @@ namespace UsersCrud.Api
             CreateMap<UserModel, UserDto>().ReverseMap();
             CreateMap<UserModel, UpdateUserDto>().ReverseMap();
             CreateMap<RoleModel, RoleDto>();
+            CreateMap<FilterUsersModel, FilterUsersDto>().ReverseMap();
         }
     }
 }

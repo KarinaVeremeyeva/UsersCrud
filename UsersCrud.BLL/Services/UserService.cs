@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using UsersCrud.BLL.Enums;
 using UsersCrud.BLL.Models;
 using UsersCrud.DAL.Entities;
 using UsersCrud.DAL.Repositories;
@@ -54,9 +56,70 @@ namespace UsersCrud.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<IEnumerable<UserModel>> GetUsersAsync()
+        public async Task<UserModel> GetUserByEmail(string email)
         {
-            var users = await _userRepository.GetAllAsync();
+            var user = await _userRepository.GetQuery()
+                .SingleOrDefaultAsync(u => u.Email == email);
+            var userModel = _mapper.Map<UserModel>(user);
+
+            return userModel;
+        }
+
+        public async Task<IEnumerable<UserModel>> GetUsersAsync(FilterUsersModel filterUsers)
+        {
+            var query = _userRepository.GetQuery();
+
+            if (filterUsers.MinAge.HasValue)
+            {
+                query = query.Where(q => q.Age >= filterUsers.MinAge.Value);
+            }
+
+            if (filterUsers.MaxAge.HasValue)
+            {
+                query = query.Where(q => q.Age <= filterUsers.MaxAge.Value);
+            }
+
+            if (!string.IsNullOrEmpty(filterUsers.NamePart))
+            {
+                query = query.Where(q => q.Name.Contains(filterUsers.NamePart));
+            }
+
+            if (!string.IsNullOrEmpty(filterUsers.EmailPart))
+            {
+                query = query.Where(q => q.Email.Contains(filterUsers.EmailPart));
+            }
+
+            if (filterUsers.UserOrder.HasValue)
+            {
+                query = filterUsers.UserOrder.Value switch
+                {
+                    UserOrder.NameDescending => query.OrderByDescending(q => q.Name),
+                    UserOrder.AgeDescending => query.OrderByDescending(q => q.Age),
+                    UserOrder.EmailDescending => query.OrderByDescending(q => q.Email),
+                    UserOrder.NameAscending => query.OrderBy(q => q.Name),
+                    UserOrder.AgeAsceding => query.OrderBy(q => q.Age),
+                    UserOrder.EmailAscending => query.OrderBy(q => q.Email),
+                    _ => query
+                };
+            }
+
+            if (filterUsers.RoleIds?.Any() == true)
+            {
+                var roleCount = filterUsers.RoleIds.Distinct().Count();
+
+                query = query.Where(q => q.Roles
+                    .Where(role => filterUsers.RoleIds.Contains(role.Id)).Count() == roleCount);
+            }
+
+            const int pageSize = 3;
+            var page = filterUsers.Page >= 0 ? filterUsers.Page : 0;
+
+            var users = await query
+                .Skip(page * pageSize)
+                .Take(pageSize)
+                .Include(u => u.Roles)
+                .ToListAsync();
+
             var usersModels = _mapper.Map<List<UserModel>>(users);
 
             return usersModels;

@@ -9,15 +9,6 @@ namespace UsersCrud.DAL.Repositories
         {
         }
 
-        public override async Task<IEnumerable<User>> GetAllAsync()
-        {
-            var users = await _context.Users
-                .Include(u => u.Roles)
-                .ToListAsync();
-
-            return users;
-        }
-
         public override async Task<User> GetByIdAsync(Guid id)
         {
             var user = await _context.Users
@@ -25,6 +16,11 @@ namespace UsersCrud.DAL.Repositories
                 .SingleOrDefaultAsync(u => u.Id == id);
 
             return user;
+        }
+
+        public IQueryable<User> GetQuery()
+        {
+            return _context.Users.Include(u => u.Roles).AsQueryable();
         }
     }
 }

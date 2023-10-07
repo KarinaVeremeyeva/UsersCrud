@@ -25,9 +25,10 @@ namespace UsersCrud.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetUsersAsync()
+        public async Task<IEnumerable<UserDto>> UsersAsync([FromQuery] FilterUsersDto filterUsersDto)
         {
-            var users = await _userService.GetUsersAsync();
+            var filterUsers = _mapper.Map<FilterUsersModel>(filterUsersDto);
+            var users = await _userService.GetUsersAsync(filterUsers);
             var usersDto = _mapper.Map<List<UserDto>>(users);
 
             return usersDto;
@@ -48,13 +49,19 @@ namespace UsersCrud.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<UserDto> AddUserAsync(UpdateUserDto userDto)
+        public async Task<IActionResult> AddUserAsync(UpdateUserDto userDto)
         {
+            var userByEmail = await _userService.GetUserByEmail(userDto.Email);
+            if (userByEmail != null)
+            {
+                return BadRequest();
+            }
+
             var user = _mapper.Map<UserModel>(userDto);
             var addedUser = await _userService.AddUserAsync(user);
             var result = _mapper.Map<UserDto>(addedUser);
 
-            return result;
+            return Ok(result);
         }
 
         [HttpPut("{userId}/role/{roleId}")]
@@ -103,12 +110,6 @@ namespace UsersCrud.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
             await _userService.RemoveUserAsync(id);
 
             return Ok();
