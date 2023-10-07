@@ -1,4 +1,5 @@
-﻿using UsersCrud.DAL.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using UsersCrud.BLL.Enums;
 
 namespace UsersCrud.Api.DTOs
 {
@@ -14,6 +15,7 @@ namespace UsersCrud.Api.DTOs
 
         public UserOrder? UserOrder { get; set; }
 
+        [Range(0, int.MaxValue)]
         public int Page { get; set; }
 
         public IEnumerable<Guid>? RoleIds { get; set; }

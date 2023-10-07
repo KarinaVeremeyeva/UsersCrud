@@ -1,4 +1,4 @@
-﻿using UsersCrud.DAL.Enums;
+﻿using UsersCrud.BLL.Enums;
 
 namespace UsersCrud.BLL.Models
 {

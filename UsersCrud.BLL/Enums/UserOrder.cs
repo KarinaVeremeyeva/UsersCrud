@@ -1,4 +1,4 @@
-﻿namespace UsersCrud.DAL.Enums
+﻿namespace UsersCrud.BLL.Enums
 {
     public enum UserOrder
     {
