@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using UsersCrud.BLL.Models;
 using UsersCrud.DAL.Entities;
-using UsersCrud.DAL.Enums;
 
 namespace UsersCrud.BLL
 {
@@ -14,10 +13,6 @@ namespace UsersCrud.BLL
                 .ForMember(
                     dest => dest.RoleName,
                     opt => opt.MapFrom(src => src.Name.ToString()));
-            CreateMap<RoleModel, Role>()
-                .ForMember(
-                    dest => dest.Name,
-                    opt => opt.MapFrom(src => Enum.Parse<Roles>(src.RoleName)));
         }
     }
 }

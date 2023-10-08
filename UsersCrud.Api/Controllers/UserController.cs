@@ -28,13 +28,13 @@ namespace UsersCrud.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> UsersAsync([FromQuery] FilterUsersDto filterUsersDto)
+        public async Task<IActionResult> UsersAsync([FromQuery] FilterUsersDto filterUsersDto)
         {
             var filterUsers = _mapper.Map<FilterUsersModel>(filterUsersDto);
             var users = await _userService.GetUsersAsync(filterUsers);
             var usersDto = _mapper.Map<List<UserDto>>(users);
 
-            return usersDto;
+            return Ok(usersDto);
         }
 
         [HttpGet("{id}")]
@@ -54,7 +54,7 @@ namespace UsersCrud.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUserAsync(UpdateUserDto userDto)
         {
-            var userByEmail = await _userService.GetUserByEmail(userDto.Email);
+            var userByEmail = await _userService.GetUserByEmailAsync(userDto.Email);
             if (userByEmail != null)
             {
                 return BadRequest();
@@ -104,7 +104,7 @@ namespace UsersCrud.Api.Controllers
             }
 
             var userModel = _mapper.Map<UserModel>(userDto);
-            var updatedUser = await _userService.UpdateUserAsync(userModel);
+            var updatedUser = await _userService.UpdateUserAsync(id, userModel);
             var result = _mapper.Map<UserDto>(updatedUser);
 
             return Ok(result);

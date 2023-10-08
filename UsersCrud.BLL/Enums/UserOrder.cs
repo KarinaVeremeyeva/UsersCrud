@@ -6,7 +6,7 @@
         NameDescending,
         EmailAscending,
         EmailDescending,
-        AgeAsceding,
+        AgeAscending,
         AgeDescending,
     }
 }

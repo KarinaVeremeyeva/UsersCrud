@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using System.Text.Json.Serialization;
 using UsersCrud.Api;
 using UsersCrud.Auth;
 using UsersCrud.Auth.Services;
@@ -52,12 +53,12 @@ builder.Services.AddAuthentication(options =>
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["TokenSettings:ValidIssuer"],
+            ValidIssuer = tokenSettings.GetValue<string>("ValidIssuer"),
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["TokenSettings:ValidAudience"],
+            ValidAudience = tokenSettings.GetValue<string>("ValidAudience"),
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenSettings:SecretKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.GetValue<string>("SecretKey")!))
         };
     });
 builder.Services.AddAuthorization();
@@ -72,7 +73,8 @@ builder.Services.Configure<TokenSettings>(tokenSettings);
 
 builder.Services.AddAutoMapper(typeof(BusinessLogicProfile), typeof(MappingProfile));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

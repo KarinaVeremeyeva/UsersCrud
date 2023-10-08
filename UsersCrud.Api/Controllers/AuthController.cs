@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using UsersCrud.Auth.Services;
 
 namespace UsersCrud.Api.Controllers
@@ -10,6 +9,7 @@ namespace UsersCrud.Api.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly ITokenService _tokenService;
+
         private const string Authorization = "Authorization";
 
         public AuthController(

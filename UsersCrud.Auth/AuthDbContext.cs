@@ -8,7 +8,6 @@ namespace UsersCrud.Auth
     {
         public AuthDbContext(DbContextOptions options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.Migrate();
         }
 
