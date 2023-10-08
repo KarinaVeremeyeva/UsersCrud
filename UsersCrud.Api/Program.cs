@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 using UsersCrud.Api;
 using UsersCrud.Auth;
@@ -16,6 +17,17 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 var identityString = builder.Configuration["ConnectionStrings:IdentityConnection"];
 var tokenSettings = builder.Configuration.GetSection("TokenSettings");
+
+var logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddSerilog(logger);
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
