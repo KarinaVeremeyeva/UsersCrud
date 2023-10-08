@@ -12,10 +12,10 @@ namespace UsersCrud.BLL.Services
 
         Task<UserModel> AddRoleToUserAsync(Guid userId, Guid roleId);
 
-        Task<UserModel> UpdateUserAsync(UserModel user);
+        Task<UserModel> UpdateUserAsync(Guid userId, UserModel user);
 
         Task RemoveUserAsync(Guid id);
 
-        Task<UserModel> GetUserByEmail(string email);
+        Task<UserModel> GetUserByEmailAsync(string email);
     }
 }

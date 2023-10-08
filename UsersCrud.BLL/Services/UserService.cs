@@ -13,6 +13,8 @@ namespace UsersCrud.BLL.Services
         private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
 
+        private const int PageSize = 3;
+
         public UserService(
             IUserRepository userRepository,
             IRoleRepository roleRepository,
@@ -56,7 +58,7 @@ namespace UsersCrud.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<UserModel> GetUserByEmail(string email)
+        public async Task<UserModel> GetUserByEmailAsync(string email)
         {
             var user = await _userRepository.GetQuery()
                 .SingleOrDefaultAsync(u => u.Email == email);
@@ -97,7 +99,7 @@ namespace UsersCrud.BLL.Services
                     UserOrder.AgeDescending => query.OrderByDescending(q => q.Age),
                     UserOrder.EmailDescending => query.OrderByDescending(q => q.Email),
                     UserOrder.NameAscending => query.OrderBy(q => q.Name),
-                    UserOrder.AgeAsceding => query.OrderBy(q => q.Age),
+                    UserOrder.AgeAscending => query.OrderBy(q => q.Age),
                     UserOrder.EmailAscending => query.OrderBy(q => q.Email),
                     _ => query
                 };
@@ -107,16 +109,17 @@ namespace UsersCrud.BLL.Services
             {
                 var roleCount = filterUsers.RoleIds.Distinct().Count();
 
-                query = query.Where(q => q.Roles
-                    .Where(role => filterUsers.RoleIds.Contains(role.Id)).Count() == roleCount);
+                query = query
+                    .Where(q => q.Roles
+                        .Where(role => filterUsers.RoleIds.Contains(role.Id))
+                        .Count() == roleCount);
             }
 
-            const int pageSize = 3;
-            var page = filterUsers.Page >= 0 ? filterUsers.Page : 0;
+            var page = filterUsers.Page;
 
             var users = await query
-                .Skip(page * pageSize)
-                .Take(pageSize)
+                .Skip(page * PageSize)
+                .Take(PageSize)
                 .Include(u => u.Roles)
                 .ToListAsync();
 
@@ -130,19 +133,19 @@ namespace UsersCrud.BLL.Services
             await _userRepository.RemoveAsync(id);
         }
 
-        public async Task<UserModel> UpdateUserAsync(UserModel userModel)
+        public async Task<UserModel> UpdateUserAsync(Guid userId, UserModel userModel)
         {
-            var userToUpdate = await _userRepository.GetByIdAsync(userModel.Id);
+            var userToUpdate = await _userRepository.GetByIdAsync(userId);
             if (userToUpdate == null)
             {
-                throw new ArgumentException($"User {userModel.Id} was not found");
+                throw new ArgumentException($"User {userId} was not found");
             }
             
             userToUpdate.Age = userModel.Age;
             userToUpdate.Name = userModel.Name;
             userToUpdate.Email = userModel.Email;
             
-            var updatedUser = _userRepository.UpdateAsync(userToUpdate);
+            var updatedUser = await _userRepository.UpdateAsync(userToUpdate);
             var result = _mapper.Map<UserModel>(updatedUser);
 
             return result;

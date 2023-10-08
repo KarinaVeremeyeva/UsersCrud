@@ -8,10 +8,10 @@ namespace UsersCrud.Api
     {
         public MappingProfile()
         {
-            CreateMap<UserModel, UserDto>().ReverseMap();
-            CreateMap<UserModel, UpdateUserDto>().ReverseMap();
+            CreateMap<UserModel, UserDto>();
+            CreateMap<UpdateUserDto, UserModel>();
             CreateMap<RoleModel, RoleDto>();
-            CreateMap<FilterUsersModel, FilterUsersDto>().ReverseMap();
+            CreateMap<FilterUsersDto, FilterUsersModel>();
         }
     }
 }

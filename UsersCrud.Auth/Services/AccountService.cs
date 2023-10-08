@@ -14,8 +14,7 @@ namespace UsersCrud.Auth.Services
 
         public async Task<SignInResult> LoginAsync(string email, string password)
         {
-            var result = await _signInManager.PasswordSignInAsync(
-                email, password, isPersistent: true, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: true, lockoutOnFailure: false);
 
             return result;
         }
